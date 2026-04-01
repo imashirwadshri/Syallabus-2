@@ -6,9 +6,21 @@
 <title>BEU Syllabus</title>
 
 <style>
+:root {
+    --bg: #f8fafc;
+    --card: white;
+    --text: #0f172a;
+}
+
+.dark {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: white;
+}
+
 body {
     margin: 0;
-    background: #f8fafc;
+    background: var(--bg);
     font-family: 'Poppins', sans-serif;
     height: 100vh;
     display: flex;
@@ -22,10 +34,11 @@ body {
     max-width: 420px;
     padding: 30px;
     border-radius: 20px;
-    background: white;
+    background: var(--card);
     text-align: center;
     box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     animation: fadeIn 1s ease;
+    position: relative;
 }
 
 @keyframes fadeIn {
@@ -34,7 +47,7 @@ body {
 }
 
 h1 {
-    color: #0f172a;
+    color: var(--text);
 }
 
 /* dropdown */
@@ -51,6 +64,7 @@ select {
 select:focus {
     border-color: #2563eb;
     box-shadow: 0 0 10px rgba(37,99,235,0.3);
+    outline: none;
 }
 
 /* button */
@@ -72,11 +86,17 @@ button:hover {
     box-shadow: 0 0 20px rgba(37,99,235,0.5);
 }
 
-/* hidden animation */
+/* submit button */
+.submit-btn {
+    background: #10b981;
+}
+
+/* hidden */
 .hidden {
     display: none;
 }
 
+/* animation */
 .show {
     display: block;
     animation: slide 0.5s ease;
@@ -91,7 +111,19 @@ button:hover {
 .msg {
     margin-top: 10px;
     font-size: 14px;
-    color: red;
+}
+
+/* mobile */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+        align-items: flex-start;
+    }
+
+    .container {
+        margin-top: 40px;
+        padding: 20px;
+    }
 }
 </style>
 </head>
@@ -99,6 +131,12 @@ button:hover {
 <body>
 
 <div class="container">
+
+    <!-- theme toggle -->
+    <button onclick="toggleTheme()" style="position:absolute;top:15px;right:15px;width:auto;padding:6px 10px;">
+        🌙
+    </button>
+
     <h1>📘 BEU Syllabus</h1>
 
     <!-- Semester -->
@@ -124,15 +162,24 @@ button:hover {
         <option value="civil">Civil</option>
     </select>
 
-    <!-- Button -->
+    <!-- Download -->
     <button id="btn" class="hidden" onclick="openPDF()">⬇ Download Syllabus</button>
+
+    <!-- Submit -->
+    <button class="submit-btn" onclick="openForm()">📤 Submit Syllabus</button>
 
     <!-- Message -->
     <div id="msg" class="msg"></div>
+
 </div>
 
 <script>
-// show branch
+// theme
+function toggleTheme(){
+    document.body.classList.toggle("dark");
+}
+
+// step flow
 function showBranch() {
     if (semester.value) {
         branch.classList.remove("hidden");
@@ -140,7 +187,6 @@ function showBranch() {
     }
 }
 
-// show button
 branch.addEventListener("change", () => {
     if (branch.value) {
         btn.classList.remove("hidden");
@@ -153,22 +199,26 @@ let links = {
     "ece_sem8": "https://drive.google.com/uc?export=download&id=1wR1EOGB1dKZTmYUl2nKnmixI8pU0-1ig"
 };
 
-// open or show message
+// open PDF
 function openPDF() {
     let key = branch.value + "_" + semester.value;
 
     if (links[key]) {
-        msg.innerText = "Opening PDF...";
+        msg.innerText = "✅ Download starting...";
         msg.style.color = "green";
 
         setTimeout(() => {
             window.open(links[key], "_blank");
-        }, 500);
-
+        }, 400);
     } else {
-        msg.innerText = "❌ Syllabus not available for this selection";
+        msg.innerText = "❌ Syllabus not available";
         msg.style.color = "red";
     }
+}
+
+// open google form
+function openForm(){
+    window.open("https://forms.gle/YOUR_FORM_LINK", "_blank");
 }
 </script>
 
