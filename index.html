@@ -6,38 +6,35 @@
 <title>BEU Syllabus</title>
 
 <style>
-:root {
-    --bg: #0f172a;
-    --card: rgba(255,255,255,0.08);
-    --text: #ffffff;
-}
-
 body {
     margin: 0;
-    background: var(--bg);
+    background: #f8fafc;
     font-family: 'Poppins', sans-serif;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
 }
 
 /* container */
 .container {
     width: 90%;
     max-width: 420px;
-    background: var(--card);
-    padding: 25px;
+    padding: 30px;
     border-radius: 20px;
-    backdrop-filter: blur(20px);
+    background: white;
     text-align: center;
-    box-shadow: 0 0 40px rgba(0,0,0,0.4);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    animation: fadeIn 1s ease;
 }
 
-/* heading */
+@keyframes fadeIn {
+    from {opacity:0; transform: translateY(30px);}
+    to {opacity:1;}
+}
+
 h1 {
-    color: var(--text);
-    margin-bottom: 20px;
+    color: #0f172a;
 }
 
 /* dropdown */
@@ -46,10 +43,14 @@ select {
     padding: 14px;
     margin: 12px 0;
     border-radius: 12px;
-    border: none;
-    font-size: 16px;
-    background: rgba(255,255,255,0.15);
-    color: white;
+    border: 2px solid #e2e8f0;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 10px rgba(37,99,235,0.3);
 }
 
 /* button */
@@ -58,29 +59,39 @@ button {
     padding: 14px;
     border-radius: 12px;
     border: none;
-    margin-top: 10px;
-    font-size: 17px;
+    margin-top: 15px;
+    font-size: 16px;
     color: white;
-    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    background: linear-gradient(45deg,#2563eb,#3b82f6);
     cursor: pointer;
+    transition: 0.3s;
 }
 
-/* mobile spacing */
-@media (max-width: 500px) {
-    .container {
-        width: 95%;
-        padding: 20px;
-    }
-
-    h1 {
-        font-size: 20px;
-    }
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(37,99,235,0.5);
 }
 
-.footer {
+/* hidden animation */
+.hidden {
+    display: none;
+}
+
+.show {
+    display: block;
+    animation: slide 0.5s ease;
+}
+
+@keyframes slide {
+    from {opacity:0; transform: translateY(20px);}
+    to {opacity:1;}
+}
+
+/* message */
+.msg {
     margin-top: 10px;
-    font-size: 12px;
-    color: gray;
+    font-size: 14px;
+    color: red;
 }
 </style>
 </head>
@@ -90,7 +101,8 @@ button {
 <div class="container">
     <h1>📘 BEU Syllabus</h1>
 
-    <select id="semester">
+    <!-- Semester -->
+    <select id="semester" onchange="showBranch()">
         <option value="">Select Semester</option>
         <option value="sem1">Semester 1</option>
         <option value="sem2">Semester 2</option>
@@ -102,7 +114,8 @@ button {
         <option value="sem8">Semester 8</option>
     </select>
 
-    <select id="branch">
+    <!-- Branch -->
+    <select id="branch" class="hidden">
         <option value="">Select Branch</option>
         <option value="cse">CSE</option>
         <option value="ece">ECE</option>
@@ -111,31 +124,50 @@ button {
         <option value="civil">Civil</option>
     </select>
 
-    <button onclick="openPDF()">🚀 Open Syllabus</button>
+    <!-- Button -->
+    <button id="btn" class="hidden" onclick="openPDF()">⬇ Download Syllabus</button>
 
-    <div class="footer">Now properly responsive 🔥</div>
+    <!-- Message -->
+    <div id="msg" class="msg"></div>
 </div>
 
 <script>
+// show branch
+function showBranch() {
+    if (semester.value) {
+        branch.classList.remove("hidden");
+        branch.classList.add("show");
+    }
+}
+
+// show button
+branch.addEventListener("change", () => {
+    if (branch.value) {
+        btn.classList.remove("hidden");
+        btn.classList.add("show");
+    }
+});
+
+// syllabus links
 let links = {
-    "ece_sem8": "https://drive.google.com/file/d/1wR1EOGB1dKZTmYUl2nKnmixI8pU0-1ig/view?usp=drivesdk"
+    "ece_sem8": "https://drive.google.com/uc?export=download&id=1wR1EOGB1dKZTmYUl2nKnmixI8pU0-1ig"
 };
 
+// open or show message
 function openPDF() {
-    let sem = document.getElementById("semester").value;
-    let branch = document.getElementById("branch").value;
-
-    if (!sem || !branch) {
-        alert("Select both!");
-        return;
-    }
-
-    let key = branch + "_" + sem;
+    let key = branch.value + "_" + semester.value;
 
     if (links[key]) {
-        window.open(links[key], "_blank");
+        msg.innerText = "Opening PDF...";
+        msg.style.color = "green";
+
+        setTimeout(() => {
+            window.open(links[key], "_blank");
+        }, 500);
+
     } else {
-        alert("Abhi Bas 8th sem ECE ka dikhega Dheere dheere thik kr dege ");
+        msg.innerText = "❌ Syllabus not available for this selection";
+        msg.style.color = "red";
     }
 }
 </script>
