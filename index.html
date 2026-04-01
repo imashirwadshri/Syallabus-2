@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BEU Syllabus</title>
 
 <style>
@@ -11,81 +12,69 @@
     --text: #ffffff;
 }
 
-.light {
-    --bg: #f1f5f9;
-    --card: rgba(0,0,0,0.05);
-    --text: #111;
-}
-
 body {
     margin: 0;
-    height: 100vh;
     background: var(--bg);
+    font-family: 'Poppins', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: 'Poppins', sans-serif;
-    transition: 0.4s;
+    min-height: 100vh;
 }
 
 /* container */
 .container {
+    width: 90%;
+    max-width: 420px;
     background: var(--card);
-    padding: 30px;
+    padding: 25px;
     border-radius: 20px;
-    width: 320px;
     backdrop-filter: blur(20px);
     text-align: center;
     box-shadow: 0 0 40px rgba(0,0,0,0.4);
 }
 
-/* heading fix */
+/* heading */
 h1 {
     color: var(--text);
     margin-bottom: 20px;
-    font-size: 22px;
 }
 
 /* dropdown */
 select {
     width: 100%;
-    padding: 12px;
-    margin: 10px 0;
+    padding: 14px;
+    margin: 12px 0;
     border-radius: 12px;
     border: none;
+    font-size: 16px;
     background: rgba(255,255,255,0.15);
-    color: var(--text);
+    color: white;
 }
 
 /* button */
 button {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     border-radius: 12px;
     border: none;
     margin-top: 10px;
-    font-size: 16px;
+    font-size: 17px;
     color: white;
     background: linear-gradient(45deg, #00c6ff, #0072ff);
     cursor: pointer;
-    transition: 0.3s;
 }
 
-button:hover {
-    transform: scale(1.05);
-}
+/* mobile spacing */
+@media (max-width: 500px) {
+    .container {
+        width: 95%;
+        padding: 20px;
+    }
 
-/* toggle switch */
-.toggle {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: #00c6ff;
-    padding: 8px 12px;
-    border-radius: 20px;
-    color: white;
-    cursor: pointer;
-    font-size: 12px;
+    h1 {
+        font-size: 20px;
+    }
 }
 
 .footer {
@@ -97,8 +86,6 @@ button:hover {
 </head>
 
 <body>
-
-<div class="toggle" onclick="toggleTheme()">🌙 / ☀️</div>
 
 <div class="container">
     <h1>📘 BEU Syllabus</h1>
@@ -126,16 +113,10 @@ button:hover {
 
     <button onclick="openPDF()">🚀 Open Syllabus</button>
 
-    <div class="footer">Now looks clean 🔥</div>
+    <div class="footer">Now properly responsive 🔥</div>
 </div>
 
 <script>
-// theme toggle
-function toggleTheme() {
-    document.body.classList.toggle("light");
-}
-
-// pdf
 let links = {
     "ece_sem8": "https://drive.google.com/file/d/1wR1EOGB1dKZTmYUl2nKnmixI8pU0-1ig/view?usp=drivesdk"
 };
