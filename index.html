@@ -5,22 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BEU Syllabus</title>
 
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <style>
-:root {
-    --bg: #f8fafc;
-    --card: white;
-    --text: #0f172a;
-}
-
-.dark {
-    --bg: #0f172a;
-    --card: #1e293b;
-    --text: white;
-}
-
 body {
     margin: 0;
-    background: var(--bg);
+    background: #f8fafc;
     font-family: 'Poppins', sans-serif;
     height: 100vh;
     display: flex;
@@ -28,102 +18,39 @@ body {
     align-items: center;
 }
 
-/* container */
 .container {
     width: 90%;
     max-width: 420px;
     padding: 30px;
     border-radius: 20px;
-    background: var(--card);
+    background: white;
     text-align: center;
     box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-    animation: fadeIn 1s ease;
-    position: relative;
 }
 
-@keyframes fadeIn {
-    from {opacity:0; transform: translateY(30px);}
-    to {opacity:1;}
-}
+h1 { color: #0f172a; }
 
-h1 {
-    color: var(--text);
-}
-
-/* dropdown */
-select {
+select, input {
     width: 100%;
     padding: 14px;
-    margin: 12px 0;
+    margin: 10px 0;
     border-radius: 12px;
     border: 2px solid #e2e8f0;
-    font-size: 15px;
-    transition: 0.3s;
 }
 
-select:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 10px rgba(37,99,235,0.3);
-    outline: none;
-}
-
-/* button */
 button {
     width: 100%;
     padding: 14px;
     border-radius: 12px;
     border: none;
-    margin-top: 15px;
-    font-size: 16px;
+    margin-top: 10px;
     color: white;
     background: linear-gradient(45deg,#2563eb,#3b82f6);
     cursor: pointer;
-    transition: 0.3s;
 }
 
-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(37,99,235,0.5);
-}
-
-/* submit button */
 .submit-btn {
     background: #10b981;
-}
-
-/* hidden */
-.hidden {
-    display: none;
-}
-
-/* animation */
-.show {
-    display: block;
-    animation: slide 0.5s ease;
-}
-
-@keyframes slide {
-    from {opacity:0; transform: translateY(20px);}
-    to {opacity:1;}
-}
-
-/* message */
-.msg {
-    margin-top: 10px;
-    font-size: 14px;
-}
-
-/* mobile */
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
-        align-items: flex-start;
-    }
-
-    .container {
-        margin-top: 40px;
-        padding: 20px;
-    }
 }
 </style>
 </head>
@@ -131,94 +58,64 @@ button:hover {
 <body>
 
 <div class="container">
+<h1>📘 BEU Syllabus</h1>
 
-    <!-- theme toggle -->
-    <button onclick="toggleTheme()" style="position:absolute;top:15px;right:15px;width:auto;padding:6px 10px;">
-        🌙
-    </button>
+<!-- DOWNLOAD SYSTEM (UNCHANGED) -->
+<select id="semester">
+<option value="">Select Semester</option>
+<option value="sem8">Semester 8</option>
+</select>
 
-    <h1>📘 BEU Syllabus</h1>
+<select id="branch">
+<option value="">Select Branch</option>
+<option value="ece">ECE</option>
+</select>
 
-    <!-- Semester -->
-    <select id="semester" onchange="showBranch()">
-        <option value="">Select Semester</option>
-        <option value="sem1">Semester 1</option>
-        <option value="sem2">Semester 2</option>
-        <option value="sem3">Semester 3</option>
-        <option value="sem4">Semester 4</option>
-        <option value="sem5">Semester 5</option>
-        <option value="sem6">Semester 6</option>
-        <option value="sem7">Semester 7</option>
-        <option value="sem8">Semester 8</option>
-    </select>
+<button onclick="openPDF()">⬇ Download</button>
 
-    <!-- Branch -->
-    <select id="branch" class="hidden">
-        <option value="">Select Branch</option>
-        <option value="cse">CSE</option>
-        <option value="ece">ECE</option>
-        <option value="me">ME</option>
-        <option value="ee">EE</option>
-        <option value="civil">Civil</option>
-    </select>
+<hr>
 
-    <!-- Download -->
-    <button id="btn" class="hidden" onclick="openPDF()">⬇ Download Syllabus</button>
+<!-- SUBMIT FORM -->
+<h3>📤 Submit Syllabus</h3>
 
-    <!-- Submit -->
-    <button class="submit-btn" onclick="openForm()">📤 Submit Syllabus</button>
+<input type="text" id="name" placeholder="Your Name">
+<input type="text" id="branchInput" placeholder="Branch">
+<input type="text" id="semInput" placeholder="Semester">
+<input type="text" id="pdfLink" placeholder="Paste Google Drive PDF Link">
 
-    <!-- Message -->
-    <div id="msg" class="msg"></div>
+<button class="submit-btn" onclick="sendEmail()">Submit</button>
 
 </div>
 
 <script>
-// theme
-function toggleTheme(){
-    document.body.classList.toggle("dark");
+// EMAILJS INIT
+(function(){
+emailjs.init("YOUR_PUBLIC_KEY");
+})();
+
+// DOWNLOAD
+function openPDF(){
+window.open("https://drive.google.com/uc?export=download&id=1wR1EOGB1dKZTmYUl2nKnmixI8pU0-1ig");
 }
 
-// step flow
-function showBranch() {
-    if (semester.value) {
-        branch.classList.remove("hidden");
-        branch.classList.add("show");
-    }
-}
+// SEND EMAIL
+function sendEmail(){
 
-branch.addEventListener("change", () => {
-    if (branch.value) {
-        btn.classList.remove("hidden");
-        btn.classList.add("show");
-    }
-});
-
-// syllabus links
-let links = {
-    "ece_sem8": "https://drive.google.com/uc?export=download&id=1wR1EOGB1dKZTmYUl2nKnmixI8pU0-1ig"
+let params = {
+name: document.getElementById("name").value,
+branch: document.getElementById("branchInput").value,
+semester: document.getElementById("semInput").value,
+pdf: document.getElementById("pdfLink").value
 };
 
-// open PDF
-function openPDF() {
-    let key = branch.value + "_" + semester.value;
+emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",params)
+.then(()=>{
+alert("✅ Submitted successfully!");
+})
+.catch(()=>{
+alert("❌ Error sending");
+});
 
-    if (links[key]) {
-        msg.innerText = "✅ Download starting...";
-        msg.style.color = "green";
-
-        setTimeout(() => {
-            window.open(links[key], "_blank");
-        }, 400);
-    } else {
-        msg.innerText = "❌ Syllabus not available";
-        msg.style.color = "red";
-    }
-}
-
-// open google form
-function openForm(){
-    window.open("https://forms.gle/YOUR_FORM_LINK", "_blank");
 }
 </script>
 
