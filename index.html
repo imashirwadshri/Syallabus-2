@@ -11,42 +11,35 @@
 body {
     margin: 0;
     background: #f8fafc;
-    font-family: 'Poppins', sans-serif;
-    height: 100vh;
+    font-family: sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100vh;
 }
 
 .container {
     width: 90%;
     max-width: 420px;
-    padding: 30px;
+    padding: 25px;
     border-radius: 20px;
     background: white;
     text-align: center;
     box-shadow: 0 10px 40px rgba(0,0,0,0.1);
 }
 
-h1 { color: #0f172a; }
-
-select, input {
+select, input, button {
     width: 100%;
-    padding: 14px;
-    margin: 10px 0;
-    border-radius: 12px;
-    border: 2px solid #e2e8f0;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 10px;
+    border: 1px solid #ccc;
 }
 
 button {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    border: none;
-    margin-top: 10px;
+    background: #2563eb;
     color: white;
-    background: linear-gradient(45deg,#2563eb,#3b82f6);
-    cursor: pointer;
+    border: none;
 }
 
 .submit-btn {
@@ -58,29 +51,59 @@ button {
 <body>
 
 <div class="container">
-<h1>📘 BEU Syllabus</h1>
 
-<!-- DOWNLOAD SYSTEM (UNCHANGED) -->
+<h2>📘 Download Syllabus</h2>
+
 <select id="semester">
 <option value="">Select Semester</option>
+<option value="sem1">Semester 1</option>
+<option value="sem2">Semester 2</option>
+<option value="sem3">Semester 3</option>
+<option value="sem4">Semester 4</option>
+<option value="sem5">Semester 5</option>
+<option value="sem6">Semester 6</option>
+<option value="sem7">Semester 7</option>
 <option value="sem8">Semester 8</option>
 </select>
 
 <select id="branch">
 <option value="">Select Branch</option>
+<option value="cse">CSE</option>
 <option value="ece">ECE</option>
+<option value="me">ME</option>
+<option value="ee">EE</option>
+<option value="civil">Civil</option>
 </select>
 
 <button onclick="openPDF()">⬇ Download</button>
 
 <hr>
 
-<!-- SUBMIT FORM -->
-<h3>📤 Submit Syllabus</h3>
+<h2>📤 Submit Syllabus</h2>
 
 <input type="text" id="name" placeholder="Your Name">
-<input type="text" id="branchInput" placeholder="Branch">
-<input type="text" id="semInput" placeholder="Semester">
+
+<select id="branchInput">
+<option value="">Select Branch</option>
+<option value="CSE">CSE</option>
+<option value="ECE">ECE</option>
+<option value="ME">ME</option>
+<option value="EE">EE</option>
+<option value="CIVIL">CIVIL</option>
+</select>
+
+<select id="semInput">
+<option value="">Select Semester</option>
+<option value="Semester 1">Semester 1</option>
+<option value="Semester 2">Semester 2</option>
+<option value="Semester 3">Semester 3</option>
+<option value="Semester 4">Semester 4</option>
+<option value="Semester 5">Semester 5</option>
+<option value="Semester 6">Semester 6</option>
+<option value="Semester 7">Semester 7</option>
+<option value="Semester 8">Semester 8</option>
+</select>
+
 <input type="text" id="pdfLink" placeholder="Paste Google Drive PDF Link">
 
 <button class="submit-btn" onclick="sendEmail()">Submit</button>
@@ -88,34 +111,46 @@ button {
 </div>
 
 <script>
-// EMAILJS INIT
-(function(){
+// INIT EMAILJS
 emailjs.init("YOUR_PUBLIC_KEY");
-})();
 
 // DOWNLOAD
 function openPDF(){
-window.open("https://drive.google.com/uc?export=download&id=1wR1EOGB1dKZTmYUl2nKnmixI8pU0-1ig");
+    let sem = document.getElementById("semester").value;
+    let branch = document.getElementById("branch").value;
+
+    if(sem==="sem8" && branch==="ece"){
+        window.open("https://drive.google.com/uc?export=download&id=1wR1EOGB1dKZTmYUl2nKnmixI8pU0-1ig");
+    } else {
+        alert("Not available");
+    }
 }
 
 // SEND EMAIL
 function sendEmail(){
 
-let params = {
-name: document.getElementById("name").value,
-branch: document.getElementById("branchInput").value,
-semester: document.getElementById("semInput").value,
-pdf: document.getElementById("pdfLink").value
-};
+let name = document.getElementById("name").value;
+let branch = document.getElementById("branchInput").value;
+let sem = document.getElementById("semInput").value;
+let pdf = document.getElementById("pdfLink").value;
 
-emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",params)
-.then(()=>{
-alert("✅ Submitted successfully!");
+if(!name || !branch || !sem || !pdf){
+    alert("Fill all fields!");
+    return;
+}
+
+emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",{
+    name: name,
+    branch: branch,
+    semester: sem,
+    pdf: pdf
 })
-.catch(()=>{
-alert("❌ Error sending");
+.then(()=>{
+    alert("✅ Submitted! Check your email");
+})
+.catch((err)=>{
+    alert("❌ Error: "+JSON.stringify(err));
 });
-
 }
 </script>
 
