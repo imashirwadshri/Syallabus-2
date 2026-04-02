@@ -2,156 +2,226 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BEU Syllabus</title>
 
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
 <style>
-body {
-    margin: 0;
-    background: #f8fafc;
-    font-family: sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins;}
+
+body{
+    height:100vh;
+    overflow:hidden;
+    background:#0f2027;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
 }
 
-.container {
-    width: 90%;
-    max-width: 420px;
-    padding: 25px;
-    border-radius: 20px;
-    background: white;
-    text-align: center;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+/* BACKGROUND */
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
 }
 
-select, input, button {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 10px;
-    border: 1px solid #ccc;
+/* CONTAINER */
+.container{
+    position:relative;
+    z-index:1;
+    width:520px;
+    padding:60px 45px;
+    border-radius:30px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(25px);
+    text-align:center;
+    box-shadow:0 0 60px rgba(0,0,0,0.7);
 }
 
-button {
-    background: #2563eb;
-    color: white;
-    border: none;
+/* TEXT */
+.header{font-size:32px;font-weight:800;}
+.name{font-size:16px;color:gold;margin:15px 0;}
+.time{font-size:18px;margin:20px 0;}
+.title{font-size:20px;margin-bottom:20px;}
+
+select{
+    width:100%;
+    padding:18px;
+    margin:12px 0;
+    border-radius:14px;
+    border:none;
 }
 
-.submit-btn {
-    background: #10b981;
+button{
+    width:100%;
+    padding:18px;
+    margin-top:20px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(45deg,#ffd700,#ffcc00);
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
 }
+
+/* CURSOR */
+.cursor{
+    width:6px;
+    height:6px;
+    background:white;
+    position:fixed;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:9999;
+}
+.cursor2{
+    width:30px;
+    height:30px;
+    border:2px solid gold;
+    position:fixed;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:9999;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<canvas id="bg"></canvas>
 
-<h2>📘 Download Syllabus</h2>
+<div class="cursor"></div>
+<div class="cursor2"></div>
+
+<div class="container">
+<div class="header">BIHAR ENGINEERING UNIVERSITY</div>
+<div class="name">Ashirwad Shrivastava 🚀</div>
+
+<div class="time" id="time"></div>
+
+<div class="title">Download Syllabus</div>
 
 <select id="semester">
 <option value="">Select Semester</option>
-<option value="sem1">Semester 1</option>
-<option value="sem2">Semester 2</option>
-<option value="sem3">Semester 3</option>
-<option value="sem4">Semester 4</option>
-<option value="sem5">Semester 5</option>
-<option value="sem6">Semester 6</option>
-<option value="sem7">Semester 7</option>
-<option value="sem8">Semester 8</option>
+<option>Semester 1</option>
+<option>Semester 2</option>
+<option>Semester 3</option>
+<option>Semester 4</option>
+<option>Semester 5</option>
+<option>Semester 6</option>
+<option>Semester 7</option>
+<option>Semester 8</option>
 </select>
 
 <select id="branch">
 <option value="">Select Branch</option>
-<option value="cse">CSE</option>
-<option value="ece">ECE</option>
-<option value="me">ME</option>
-<option value="ee">EE</option>
-<option value="civil">Civil</option>
+<option>CSE</option>
+<option>ECE</option>
+<option>ME</option>
+<option>CIVIL</option>
+<option>EE</option>
 </select>
 
-<button onclick="openPDF()">⬇ Download</button>
-
-<hr>
-
-<h2>📤 Submit Syllabus</h2>
-
-<input type="text" id="name" placeholder="Your Name">
-
-<select id="branchInput">
-<option value="">Select Branch</option>
-<option value="CSE">CSE</option>
-<option value="ECE">ECE</option>
-<option value="ME">ME</option>
-<option value="EE">EE</option>
-<option value="CIVIL">CIVIL</option>
-</select>
-
-<select id="semInput">
-<option value="">Select Semester</option>
-<option value="Semester 1">Semester 1</option>
-<option value="Semester 2">Semester 2</option>
-<option value="Semester 3">Semester 3</option>
-<option value="Semester 4">Semester 4</option>
-<option value="Semester 5">Semester 5</option>
-<option value="Semester 6">Semester 6</option>
-<option value="Semester 7">Semester 7</option>
-<option value="Semester 8">Semester 8</option>
-</select>
-
-<input type="text" id="pdfLink" placeholder="Paste Google Drive PDF Link">
-
-<button class="submit-btn" onclick="sendEmail()">Submit</button>
-
+<button onclick="download()">Download</button>
 </div>
 
 <script>
-// INIT EMAILJS
-emailjs.init("YOUR_PUBLIC_KEY");
 
-// DOWNLOAD
-function openPDF(){
-    let sem = document.getElementById("semester").value;
-    let branch = document.getElementById("branch").value;
+// TIME
+setInterval(()=>{
+document.getElementById("time").innerHTML=new Date().toLocaleString();
+},1000);
 
-    if(sem==="sem8" && branch==="ece"){
-        window.open("https://drive.google.com/uc?export=download&id=1wR1EOGB1dKZTmYUl2nKnmixI8pU0-1ig");
-    } else {
-        alert("Not available");
-    }
+// DOWNLOAD (FINAL WORKING)
+function download(){
+let sem=document.getElementById("semester").value;
+let branch=document.getElementById("branch").value;
+
+if(!sem || !branch){
+alert("Select semester & branch");
+return;
 }
 
-// SEND EMAIL
-function sendEmail(){
-
-let name = document.getElementById("name").value;
-let branch = document.getElementById("branchInput").value;
-let sem = document.getElementById("semInput").value;
-let pdf = document.getElementById("pdfLink").value;
-
-if(!name || !branch || !sem || !pdf){
-    alert("Fill all fields!");
-    return;
+// ✅ ECE 8th sem direct download
+if(sem==="Semester 8" && branch==="ECE"){
+window.location.href="https://drive.google.com/uc?export=download&id=1wR1EOGB1dKZTmYUl2nKnmixI8pU0-1ig";
 }
 
-emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",{
-    name: name,
-    branch: branch,
-    semester: sem,
-    pdf: pdf
-})
-.then(()=>{
-    alert("✅ Submitted! Check your email");
-})
-.catch((err)=>{
-    alert("❌ Error: "+JSON.stringify(err));
+if(sem === "Semester 7" && branch === "CSE") {
+    window.location.href ="https://drive.google.com/uc?export=download&id=1owM7mAIrITEGUQmd8nT_rH3A6IPtxvk_";
+}
+else{
+alert("Not available");
+}
+}
+
+
+
+// CURSOR (VIDEO STYLE PERFECT)
+let dot=document.querySelector(".cursor");
+let circle=document.querySelector(".cursor2");
+
+document.addEventListener("mousemove",(e)=>{
+let x=e.clientX;
+let y=e.clientY;
+
+dot.style.left=x+"px";
+dot.style.top=y+"px";
+
+circle.style.left=(x-15)+"px";
+circle.style.top=(y-15)+"px";
+});
+
+// BACKGROUND DOT + CONNECTION
+let canvas=document.getElementById("bg");
+let ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let dots=[];
+for(let i=0;i<70;i++){
+dots.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+dx:(Math.random()-0.5)*0.5,
+dy:(Math.random()-0.5)*0.5
 });
 }
+
+function draw(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+dots.forEach(d=>{
+d.x+=d.dx;
+d.y+=d.dy;
+
+// dot
+ctx.fillStyle="rgba(255,255,255,0.9)";
+ctx.fillRect(d.x,d.y,2.5,2.5);
+
+// connection
+dots.forEach(d2=>{
+let dist=Math.hypot(d.x-d2.x,d.y-d2.y);
+
+if(dist<100){
+let opacity=1-dist/100;
+
+ctx.strokeStyle=`rgba(255,215,0,${opacity})`;
+ctx.lineWidth=1.2;
+
+ctx.beginPath();
+ctx.moveTo(d.x,d.y);
+ctx.lineTo(d2.x,d2.y);
+ctx.stroke();
+}
+});
+});
+
+requestAnimationFrame(draw);
+}
+draw();
+
 </script>
 
 </body>
